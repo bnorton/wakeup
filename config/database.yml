@@ -9,5 +9,3 @@ development:
   <<: *defaults
 production:
   <<: *defaults
-  username: 'wakeup-production'
-  password: 'b235e7276f3a8c7fa78228016ac81682'
