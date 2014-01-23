@@ -4,6 +4,7 @@ ENV['RUBYMINE']  = 'true' if (rubymine = /RubyMine/ === ENV['RUBYLIB'])
 ENV['DBNAME'] = 'rubymine-test' if rubymine
 
 require File.expand_path('../../config/environment', __FILE__)
+require 'rake/task'
 require 'rspec/rails'
 require 'webmock/rspec'
 require 'timecop'
@@ -12,10 +13,15 @@ Dir[Rails.root.join('spec/{factories,support}/**/*.rb')].each {|f| require f }
 
 WebMock.disable_net_connect!(:allow_localhost => true)
 
-unless rubymine
+if rubymine
+  `rake test:prepare`
+else
   Rails.logger.info "\n[#{Time.now.localtime}] - Logging with level ERROR (4). see #{__FILE__}:#{__LINE__}"
-  Sidekiq.logger.level = Rails.logger.level = 4
+  Sidekiq.logger = Rails.logger
+  Rails.logger.level = 4
 end
+
+Sidekiq.logger.level = 4
 
 silence_warnings {
   Redis = MockRedis

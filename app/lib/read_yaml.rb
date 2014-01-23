@@ -9,8 +9,6 @@ require 'active_support/core_ext/hash'
 def read_yaml(name, env=nil)
   env ||= defined?(Rails) ? Rails.env : ENV['RAILS_ENV']
 
-  puts File.expand_path("../../../config/#{name}", __FILE__)
-
   name = name + '.yml' unless /\.yml$/ === name
   yaml = YAML.load(IO.read(File.expand_path("../../../config/#{name}", __FILE__)))
   config = yaml[env.to_s]
