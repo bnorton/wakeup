@@ -1,0 +1,13 @@
+test: &defaults
+  adapter: postgresql
+  encoding: unicode
+  database: wakeup_<%= ENV['DBNAME'] || ENV['RAILS_ENV'] || 'test' %>
+  pool: 25
+  username: wakeup
+  password: letmein
+development:
+  <<: *defaults
+production:
+  <<: *defaults
+  username: 'wakeup-production'
+  password: 'b235e7276f3a8c7fa78228016ac81682'
