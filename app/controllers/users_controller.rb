@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
   def create
-    json _create(:phone, :timezone, :locale, :version)
+    json _create(:phone, :udid, :timezone, :locale, :version, :bundle)
   end
 end

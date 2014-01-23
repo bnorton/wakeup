@@ -1,3 +1,3 @@
 class UserPresenter < Presenter
-  allow :phone, :token, :locale, :version, :timezone
+  allow :phone, :udid, :token, :locale, :version, :timezone, :bundle
 end

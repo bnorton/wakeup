@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe UsersController do
   describe '.create' do
-    let(:options) { { :phone => '7143005444', :timezone => '-5', :locale => 'DE', :version => '1.2' } }
+    let(:options) { { :phone => '7143005444', :timezone => '-5', :locale => 'DE', :version => '1.2', :udid => '123', :bundle => 'com.blah' } }
 
     describe '.json' do
       def response
@@ -29,6 +29,8 @@ describe UsersController do
         user.timezone.should == -5
         user.locale.should == 'DE'
         user.version.should == '1.2'
+        user.udid.should == '123'
+        user.bundle.should == 'com.blah'
         user.verified_at.should == nil
       end
 
