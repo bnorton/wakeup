@@ -1,9 +1,11 @@
-test: &defaults
+test:
   id: '123'
   token: '456'
   number: '+17143005444'
-development:
-  <<: *defaults
+development: &defaults
+  id: 'ACbb6fa730f2d484cabb47a62c0c96e7b3'
+  token: '56739f321e47d7984e33d619f1bd514f'
+  number: '+14152026851'
 production:
   <<: *defaults
-  number: '+14153602383'
+  number: '+14152026851'
