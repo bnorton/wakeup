@@ -38,6 +38,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include FactoryGirl::Syntax::Methods
+  config.include Helpers
 
   config.include Rails.application.routes.url_helpers, :url_helpers => true
 

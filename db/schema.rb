@@ -11,9 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20140123180006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "users", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "phone"
+    t.string   "token"
+    t.string   "locale"
+    t.string   "version"
+    t.string   "code"
+    t.string   "vcode"
+    t.integer  "timezone"
+    t.datetime "verified_at"
+  end
+
+  add_index "users", ["phone"], name: "index_users_on_phone", unique: true, using: :btree
 
 end
