@@ -37,7 +37,7 @@ describe Hat do
     end
 
     it 'should generate 10 character short code' do
-      10_000.times.map { described_class.short.length }.uniq.should == [10]
+      1000.times.map { described_class.short.length }.uniq.should == [10]
     end
   end
 
@@ -47,7 +47,7 @@ describe Hat do
     end
 
     it 'should generate 24 character short code' do
-      10_000.times.map { described_class.long.length }.uniq.should == [24]
+      1000.times.map { described_class.long.length }.uniq.should == [24]
     end
   end
 end
