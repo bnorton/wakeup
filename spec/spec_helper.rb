@@ -50,8 +50,8 @@ RSpec.configure do |config|
     Sidekiq.redis {|r| r.flushdb }
   end
 
-  config.before(:each, :frozen => true) { Timecop.return }
-  config.after(:each, :frozen => true) { Timecop.return }
+  config.before(:each, :freeze => true) { Timecop.freeze(DateTime.now) }
+  config.after( :each, :freeze => true) { Timecop.return }
 end
 
 Dir[Rails.root.join('db/migrate/*.rb')].each {|f| require f }

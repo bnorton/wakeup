@@ -18,26 +18,26 @@ describe User do
           id.should == subject.id
         end
 
-        subject.save!
+        subject.save
       end
 
       it 'should add a verification code' do
-        subject.tap(&:save!).code.to_s.should have(4).characters
+        subject.tap(&:save).code.to_s.should have(4).characters
         subject.vcode.should == nil
       end
 
       it 'should add an authentication token' do
-        subject.tap(&:save!).token.should have(24).characters
+        subject.tap(&:save).token.should have(24).characters
       end
     end
 
     describe 'on update' do
-      let!(:user) { subject.tap(&:save!) }
+      let!(:user) { subject.tap(&:save) }
 
       it 'should not change the token' do
         token = subject.token
 
-        subject.tap(&:save!).reload.token.should == token
+        subject.tap(&:save).reload.token.should == token
       end
 
       describe 'when adding a vocde' do
@@ -49,20 +49,22 @@ describe User do
         end
 
         it 'should update the information' do
-          subject.tap(&:save!).reload
+          subject.tap(&:save).reload
 
           subject.token.should_not == @token
           subject.code.should_not == @code
+          subject.verified_at.should be_within(1).of Time.now
         end
 
         describe 'when the vcode does not match' do
           let(:vcode) { 'unmatched' }
 
           it 'should not update the information' do
-            subject.tap(&:save!).reload
+            subject.tap(&:save).reload
 
             subject.token.should == @token
             subject.code.should == @code
+            subject.verified_at.should == nil
           end
         end
       end

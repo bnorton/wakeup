@@ -9,7 +9,10 @@ class User < ActiveRecord::Base
   private
 
   def verify
-    reset_auth if vcode == code
+    (vcode == code).tap_if do
+      self.verified_at = Time.now
+      reset_auth
+    end
   end
 
   def defaults_before_create

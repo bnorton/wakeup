@@ -43,14 +43,58 @@ describe UsersController do
           create(:user, options)
         end
 
-        it 'should be a 422' do
-          response.code.should == '422'
+        it 'should be a 404' do
+          response.code.should == '404'
         end
 
         it 'should not add a user' do
           expect {
             response
           }.not_to change(User, :count)
+        end
+      end
+    end
+  end
+
+  describe '#update' do
+    let(:user) { create(:user) }
+    let(:options) { { :vcode => vcode, :version => '1.2.4', :locale => 'GB', :timezone => '-2' } }
+
+    describe '.json' do
+      let(:vcode) { user.code }
+
+      def response
+        xhr :put, :update, options.merge( :id => user.id, :format => 'json' )
+
+        super
+      end
+
+      it 'should be a 200' do
+        response.code.should == '200'
+      end
+
+      it 'should update the vcode' do
+        user.vcode.should == nil
+
+        response
+
+        user.reload.vcode.should == vcode
+      end
+
+      it 'should have the new attributes' do
+        response
+
+        user.reload
+        user.timezone.should == -2
+        user.locale.should == 'GB'
+        user.version.should == '1.2.4'
+      end
+
+      describe 'when the code does not match' do
+        let(:vcode) { 'not-match' }
+
+        it 'should be a 422' do
+          response.code.should == '422'
         end
       end
     end

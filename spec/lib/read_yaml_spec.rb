@@ -2,20 +2,20 @@ require 'spec_helper'
 
 describe :read_yaml do
   it 'should load the file' do
-    read_yaml('database.yml')[:username].should be_present
+    read_yaml('messaging.yml')[:number].should be_present
   end
 
   it 'should add the extension' do
-    read_yaml('database')[:username].should be_present
+    read_yaml('messaging')[:number].should be_present
   end
 
   it 'should read a the current rails env' do
-    dev = read_yaml('database')[:username]
+    dev = read_yaml('messaging')[:number]
 
     Rails.stub(:env).and_return('production')
-    read_yaml('database')[:username].should be_present
+    read_yaml('messaging')[:number].should be_present
 
-    read_yaml('database')[:username].should_not == dev
+    read_yaml('messaging')[:number].should_not == dev
   end
 
   describe 'when the file is not found' do
