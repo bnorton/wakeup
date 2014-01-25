@@ -40,6 +40,7 @@ class Presenter
     def as_json(*)
       {}.tap do |json|
         json['id'] = @item.id.to_s
+        json['user_id'] = @item.user_id.to_s if user_id?
 
         self.class.allowed_attributes.each do |attr|
           json[attr] = @item.send(attr)
@@ -68,6 +69,10 @@ class Presenter
 
         json[relation] = v.many(@item.send(relation), options) if respond_to?(name) && send(name)
       end
+    end
+
+    def user_id?
+      true
     end
   end
 

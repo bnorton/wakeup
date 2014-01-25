@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   def user
     @user ||= begin
-      puts "Authenticating #{user_id} with token #{user_token}\n\nheaders: #{request.headers.inspect}"
+      log "Authenticating #{user_id} with token #{user_token}\n\nheaders: #{request.headers.inspect}"
       user = user_id.presence && User.find(user_id)
       user if (user.present? && user_token.present? && user.token == user_token)
     end
@@ -13,12 +13,12 @@ class ApplicationController < ActionController::Base
   private
 
   rescue_from ActiveRecord::RecordNotUnique do |ex|
-    puts "#{relation} raised RecordNotUnique with #{ex.message}"
+    log "#{relation} raised RecordNotUnique with #{ex.message}"
     notfound
   end
 
   rescue_from ActiveRecord::RecordNotSaved do |ex|
-    puts "#{relation} raised RecordNotSaved with #{ex.message}"
+    log "#{relation} raised RecordNotSaved with #{ex.message}"
     yourfault
   end
 
@@ -62,6 +62,10 @@ class ApplicationController < ActionController::Base
 
   def error(type)
     render :json => {}, :status => type
+  end
+
+  def log(item)
+    puts item unless Rails.env.test?
   end
 end
 

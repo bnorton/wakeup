@@ -7,4 +7,6 @@ describe UserPresenter do
   let(:allowed) { [:phone, :udid, :token, :locale, :version, :timezone, :bundle, :verified_at] }
 
   it_behaves_like 'a presenter'
+
+  its(:user_id?) { should == false }
 end

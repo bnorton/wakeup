@@ -42,7 +42,7 @@ describe Presenter do
 
   describe '.many' do
     let(:options) { {:option => 'value'} }
-    let(:items) { 2.times.collect {|i| double('item', :id => i.to_s, :created_at => cat, :updated_at => uat, :status => nil) } }
+    let(:items) { 2.times.collect {|i| double('item', :id => i.to_s, :created_at => cat, :updated_at => uat, :status => nil, :user_id => 123) } }
 
     subject { BasePresenter.many(items, options) }
 
@@ -68,9 +68,15 @@ describe Presenter do
     end
   end
 
+  describe '.user_id?' do
+    it 'should be true' do
+      BasePresenter.new('foo').user_id?.should == true
+    end
+  end
+
   describe '#as_json' do
     before do
-      @item = double('item', :id => 10, :created_at => cat, :updated_at => uat, :other => :value, :string => 'keys', :thing => 2, :something_at => nil, :status => 'foo')
+      @item = double('item', :id => 10, :created_at => cat, :updated_at => uat, :other => :value, :string => 'keys', :thing => 2, :something_at => nil, :status => 'foo', :user_id => 123)
     end
 
     it 'should be the attributes' do
@@ -78,6 +84,7 @@ describe Presenter do
 
       json.should == {
         'id' => '10',
+        'user_id' => '123',
         'created_at' => cat.iso,
         'updated_at' => uat.iso,
         'status' => 'foo'
@@ -97,6 +104,7 @@ describe Presenter do
 
         json.should == {
           'id' => '10',
+          'user_id' => '123',
           'created_at' => cat.iso,
           'updated_at' => uat.iso,
           'status' => 'foo',
@@ -165,11 +173,11 @@ describe Presenter do
         end
 
         it 'should have the relation json' do
-          @item.stub(:items).and_return([double(:item, :id => '123', :created_at => cat, :updated_at => uat, :status => nil)])
+          @item.stub(:items).and_return([double(:item, :id => '123', :created_at => cat, :updated_at => uat, :status => nil, :user_id => 123)])
           json = JSON.parse(subject.to_json)
 
           json['sub'].should == { 'custom' => 'json' }
-          json['items'].should == [{'id' => '123', 'created_at' => cat.iso, 'updated_at' => uat.iso, 'status' => nil}]
+          json['items'].should == [{'id' => '123', 'user_id' => '123', 'created_at' => cat.iso, 'updated_at' => uat.iso, 'status' => nil}]
         end
 
         describe 'when the relation is not allowed' do
@@ -203,6 +211,7 @@ describe Presenter do
 
         json.should == {
           'id' => '10',
+          'user_id' => '123',
           'created_at' => cat.iso,
           'updated_at' => uat.iso,
           'status' => 'foo',
