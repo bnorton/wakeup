@@ -2,6 +2,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery :with => :null_session
   before_filter :authenticate!
 
+  def user
+    @user ||= begin
+      user = user_id.presence && User.find(user_id)
+      user if (user.present? && user_token.present? && user.token == user_token)
+    end
+  end
+
   private
 
   rescue_from ActiveRecord::RecordNotUnique do |ex|
@@ -20,13 +27,6 @@ class ApplicationController < ActionController::Base
 
   def user_id; params[:user_id] || params[:id] end
   def user_token; request.headers[TOKEN] end
-
-  def user
-    @user ||= begin
-      user = user_id.presence && User.find(user_id)
-      user if (user.present? && user_token.present? && user.token == user_token)
-    end
-  end
 
   def json(item)
     status = :ok
@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
   end
 
   def _update(*names)
-    relation.update_attributes!(params.permit(*names)) && relation
+    relation.update_attributes!(params.permit(*[*names, :status])) && relation
   end
 
   def relation
@@ -69,6 +69,10 @@ ApplicationController::CREATE = 'create'.freeze
 ApplicationController::RELATION = {
   'users' => {
     'create' => proc { User },
-    'update' => ->(c) { User.find(c.params[:id]) }
+    'update' => ->(c) { c.user }
+  },
+  'uptimes' => {
+    'create' => proc { Uptime },
+    'update' => ->(c) { c.user.uptime }
   }
 }

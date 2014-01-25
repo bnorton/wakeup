@@ -58,7 +58,7 @@ describe UsersController do
 
   describe '#update' do
     let(:user) { create(:user) }
-    let(:options) { { :vcode => vcode, :version => '1.2.4', :locale => 'GB', :timezone => '-2' } }
+    let(:options) { { :vcode => vcode, :version => '1.2.4', :locale => 'GB', :timezone => '-2', :status => 'deleted' } }
 
     describe '.json' do
       let(:vcode) { user.code }
@@ -88,6 +88,7 @@ describe UsersController do
         user.timezone.should == -2
         user.locale.should == 'GB'
         user.version.should == '1.2.4'
+        user.status.should == 'deleted'
       end
 
       describe 'when the code does not match' do

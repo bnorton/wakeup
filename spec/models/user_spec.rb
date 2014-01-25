@@ -9,6 +9,10 @@ describe User do
     validates(:phone)
   end
 
+  describe 'associations' do
+    it { should have_one(:uptime) }
+  end
+
   describe '#save' do
     subject { build(:user) }
 

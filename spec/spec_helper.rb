@@ -10,6 +10,7 @@ require 'webmock/rspec'
 require 'timecop'
 
 Dir[Rails.root.join('spec/{factories,support}/**/*.rb')].each {|f| require f }
+require 'shoulda/matchers/active_record'
 
 WebMock.disable_net_connect!(:allow_localhost => true)
 
@@ -37,14 +38,11 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.use_transactional_fixtures = true
 
+  config.include Shoulda::Matchers::ActiveRecord
   config.include FactoryGirl::Syntax::Methods
   config.include Helpers
 
   config.include Rails.application.routes.url_helpers, :url_helpers => true
-
-  config.before :suite do
-    Rails.application.eager_load!
-  end
 
   config.before :each do
     Sidekiq.redis {|r| r.flushdb }

@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140123214356) do
+ActiveRecord::Schema.define(version: 20140124234915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "uptimes", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "offset"
+    t.datetime "pushed_at"
+    t.datetime "texted_at"
+    t.datetime "called_at"
+    t.integer  "user_id"
+    t.string   "status"
+  end
+
+  add_index "uptimes", ["offset"], name: "index_uptimes_on_offset", using: :btree
+  add_index "uptimes", ["user_id"], name: "index_uptimes_on_user_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.datetime "created_at"
@@ -29,6 +43,7 @@ ActiveRecord::Schema.define(version: 20140123214356) do
     t.datetime "verified_at"
     t.string   "udid"
     t.string   "bundle"
+    t.string   "status"
   end
 
   add_index "users", ["phone"], name: "index_users_on_phone", unique: true, using: :btree

@@ -2,7 +2,7 @@ class Presenter
   def self.inherited(base)
     unless base.respond_to?(:allowed_attributes)
       base.class_attribute(:allowed_attributes)
-      base.allowed_attributes = %w(id created_at updated_at)
+      base.allowed_attributes = %w(created_at updated_at status)
     end
 
     unless base.respond_to?(:optional_attributes)
@@ -39,8 +39,11 @@ class Presenter
 
     def as_json(*)
       {}.tap do |json|
+        json['id'] = @item.id.to_s
+
         self.class.allowed_attributes.each do |attr|
           json[attr] = @item.send(attr)
+          json[attr] = json[attr].iso if json[attr].respond_to?(:iso)
         end
 
         self.class.optional_attributes.each do |(k, meth)|

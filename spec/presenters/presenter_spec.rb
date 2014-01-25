@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Presenter do
+  let(:cat) { 1.hours.ago }
+  let(:uat) { Time.now }
+
   class BasePresenter < Presenter
   end
 
@@ -39,7 +42,7 @@ describe Presenter do
 
   describe '.many' do
     let(:options) { {:option => 'value'} }
-    let(:items) { 2.times.collect {|i| double('item', :id => i.to_s, :created_at => nil, :updated_at => nil) } }
+    let(:items) { 2.times.collect {|i| double('item', :id => i.to_s, :created_at => cat, :updated_at => uat, :status => nil) } }
 
     subject { BasePresenter.many(items, options) }
 
@@ -67,7 +70,7 @@ describe Presenter do
 
   describe '#as_json' do
     before do
-      @item = double('item', :id => '10', :created_at => 33, :updated_at => 44, :other => :value, :string => 'keys', :thing => 2)
+      @item = double('item', :id => 10, :created_at => cat, :updated_at => uat, :other => :value, :string => 'keys', :thing => 2, :something_at => nil, :status => 'foo')
     end
 
     it 'should be the attributes' do
@@ -75,28 +78,31 @@ describe Presenter do
 
       json.should == {
         'id' => '10',
-        'created_at' => 33,
-        'updated_at' => 44
+        'created_at' => cat.iso,
+        'updated_at' => uat.iso,
+        'status' => 'foo'
       }
     end
 
     describe 'when adding allowed attributes' do
       class RestrictedPresenter < Presenter
-        allow :other, :thing
+        allow :other, :thing, :something_at
       end
 
       subject { RestrictedPresenter.new(@item) }
-      let(:allowed) { [:other, :thing] }
+      let(:allowed) { [:other, :thing, :something_at] }
 
       it 'should restrict the attributes' do
         json = subject.as_json
 
         json.should == {
           'id' => '10',
-          'created_at' => 33,
-          'updated_at' => 44,
+          'created_at' => cat.iso,
+          'updated_at' => uat.iso,
+          'status' => 'foo',
           'other' => :value,
-          'thing' => 2
+          'thing' => 2,
+          'something_at' => nil
         }
       end
 
@@ -159,11 +165,11 @@ describe Presenter do
         end
 
         it 'should have the relation json' do
-          @item.stub(:items).and_return([double(:item, :id => '123', :created_at => 454, :updated_at => 321)])
+          @item.stub(:items).and_return([double(:item, :id => '123', :created_at => cat, :updated_at => uat, :status => nil)])
           json = JSON.parse(subject.to_json)
 
           json['sub'].should == { 'custom' => 'json' }
-          json['items'].should == [{'id' => '123', 'created_at' => 454, 'updated_at' => 321}]
+          json['items'].should == [{'id' => '123', 'created_at' => cat.iso, 'updated_at' => uat.iso, 'status' => nil}]
         end
 
         describe 'when the relation is not allowed' do
@@ -197,8 +203,9 @@ describe Presenter do
 
         json.should == {
           'id' => '10',
-          'created_at' => 33,
-          'updated_at' => 44,
+          'created_at' => cat.iso,
+          'updated_at' => uat.iso,
+          'status' => 'foo',
           'other' => :value
         }
       end

@@ -29,5 +29,6 @@ group :test do
   gem 'webmock'
   gem 'timecop'
   gem 'connection_pool'
+  gem 'shoulda-matchers', :require => nil
 end
 

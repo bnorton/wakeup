@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
   include Model
 
+  has_one :uptime
+
   validates :phone, :presence => true
 
   before_update :verify, :if => :vcode_changed?

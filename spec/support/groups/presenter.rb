@@ -48,7 +48,7 @@ The #{presenter_name} should allow the '#{attr}' attribute,
     it 'doesn\'t allow extras' do
       allowed_keys = subject.class.allowed_attributes
 
-      if (extra = ((allowed_keys - %w(id created_at updated_at)) - allowed.map(&:to_s))).any?
+      if (extra = ((allowed_keys - %w(id created_at updated_at status)) - allowed.map(&:to_s))).any?
         raise StandardError.new("The #{presenter_name} allowed extra keys #{extra}")
       end
     end
