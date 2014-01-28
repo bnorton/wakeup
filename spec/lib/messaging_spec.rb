@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Messaging do
-  let!(:account) { Twilio::REST::Client.new('a', 'b').account }
+  let!(:client) { Typhoeus }
 
   describe 'config' do
     [:id, :token, :number].each do |attr|
@@ -36,68 +36,92 @@ describe Messaging do
   end
 
   describe '#text' do
-    let(:messages) { account.messages }
-
     let(:user) { create(:user) }
     subject { Messaging.new(user) }
 
     let(:text) { subject.text('hello you') }
 
-    before do
-      Twilio::REST::Client.any_instance.stub(:account).and_return(account)
+    it 'should send to the sms json endpoint' do
+      client.should_receive(:post) do |url,options|
+        url.should == 'rest.nexmo.com/sms/json'
+
+        options[:body][:api_key].should == Messaging.id
+        options[:body][:api_secret].should == Messaging.token
+      end
+
+      text
     end
 
     it 'should send from us' do
-      messages.should_receive(:create).with(hash_including(:from => Messaging.number))
+      client.should_receive(:post) do |_,options|
+        options[:body][:from].should == Messaging.number
+      end
 
       text
     end
 
     it 'should send to the user' do
-      messages.should_receive(:create).with(hash_including(:to => user.phone))
+      client.should_receive(:post) do |_,options|
+        options[:body][:to].should == user.phone
+      end
 
       text
     end
 
     it 'should send the given message' do
-      messages.should_receive(:create).with(hash_including(:body => 'hello you'))
+      client.should_receive(:post) do |_,options|
+        options[:body][:text].should == 'hello you'
+      end
 
       text
     end
   end
 
   describe '#call' do
-    let(:calls) { account.calls }
-
     let(:user) { create(:user) }
     subject { Messaging.new(user) }
 
-    let(:call) { subject.call('http://example.com/some-callback.xml') }
+    let(:call) { subject.call('http://example.com/some-callback.json') }
 
-    before do
-      Twilio::REST::Client.any_instance.stub(:account).and_return(account)
+    it 'should send to the sms json endpoint' do
+      client.should_receive(:post) do |url,options|
+        url.should == 'rest.nexmo.com/tts/json'
+
+        options[:body][:api_key].should == Messaging.id
+        options[:body][:api_secret].should == Messaging.token
+      end
+
+      call
     end
 
     it 'should call from us' do
-      calls.should_receive(:create).with(hash_including(:from => Messaging.number))
+      client.should_receive(:post) do |_,options|
+        options[:body][:from].should == Messaging.number
+      end
 
       call
     end
 
-    it 'should call to the user' do
-      calls.should_receive(:create).with(hash_including(:to => user.phone))
+    it 'should call from the user' do
+      client.should_receive(:post) do |_,options|
+        options[:body][:to].should == user.phone
+      end
 
       call
     end
 
-    it 'should call with a the given' do
-      calls.should_receive(:create).with(hash_including(:url => 'http://example.com/some-callback.xml'))
+    it 'should send the wakeup message' do
+      client.should_receive(:post) do |_,options|
+        options[:body][:text].should == 'wake the fuck up! literally just launch the app'
+      end
 
       call
     end
 
-    it 'should GET the url' do
-      calls.should_receive(:create).with(hash_including(:method => :get))
+    it 'should callback to the given url' do
+      client.should_receive(:post) do |_,options|
+        options[:body][:callback].should == 'http://example.com/some-callback.json'
+      end
 
       call
     end

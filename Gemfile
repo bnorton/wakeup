@@ -10,7 +10,7 @@ gem 'sidekiq'
 
 gem 'newrelic_rpm'
 
-gem 'twilio-ruby'
+gem 'typhoeus'
 
 group :development, :test do
   gem 'rspec-rails'
