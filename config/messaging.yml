@@ -1,11 +1,11 @@
 test:
   id: '123'
   token: '456'
-  number: '+17143005444'
+  number: '17143005444'
 development: &defaults
   id: '18ae3d15'
   token: '0da3c5c5'
-  number: '+17143005444'
+  number: '17143005444'
 production:
   <<: *defaults
-  number: '+14156537777'
+  number: '14156537777'
