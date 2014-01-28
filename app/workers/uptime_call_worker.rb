@@ -1,6 +1,6 @@
 class UptimeCallWorker < Worker
-  def perform(uptime_id)
-    @user = (@uptime = Uptime.find(uptime_id)).user
+  def perform(uptime_id, offset)
+    @user, @offset = (@uptime = Uptime.find(uptime_id)).user, offset
 
     return unless can_call?
 
@@ -18,6 +18,6 @@ class UptimeCallWorker < Worker
   private
 
   def can_call?
-    @uptime.status == ACTIVE && @uptime.calls < 4
+    @uptime.status == ACTIVE && @uptime.calls < 4 && @uptime.offset == @offset
   end
 end

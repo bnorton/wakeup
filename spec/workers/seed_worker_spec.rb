@@ -17,19 +17,19 @@ describe SeedWorker do
       end
 
       it 'should send a push job for the matching uptimes' do
-        UptimePushWorker.should_receive(:perform_in).with(4.minutes, @uptimes.first.id)
+        UptimePushWorker.should_receive(:perform_in).with(4.minutes, @uptimes.first.id, @uptimes.first.offset)
 
         perform
       end
 
       it 'should send an text job for the matching uptimes' do
-        UptimeTextWorker.should_receive(:perform_in).with(6.minutes, @uptimes.first.id)
+        UptimeTextWorker.should_receive(:perform_in).with(6.minutes, @uptimes.first.id, @uptimes.first.offset)
 
         perform
       end
 
       it 'should send an call job for the matching uptimes' do
-        UptimeCallWorker.should_receive(:perform_in).with(8.minutes, @uptimes.first.id)
+        UptimeCallWorker.should_receive(:perform_in).with(8.minutes, @uptimes.first.id, @uptimes.first.offset)
 
         perform
       end
@@ -46,19 +46,19 @@ describe SeedWorker do
         end
 
         it 'should send a push job for the matching uptimes' do
-          UptimePushWorker.should_receive(:perform_in).with(1.minutes, @uptimes.last.id)
+          UptimePushWorker.should_receive(:perform_in).with(1.minutes, @uptimes.last.id, @uptimes.last.offset)
 
           perform
         end
 
         it 'should send an text job for the matching uptimes' do
-          UptimeTextWorker.should_receive(:perform_in).with(3.minutes, @uptimes.last.id)
+          UptimeTextWorker.should_receive(:perform_in).with(3.minutes, @uptimes.last.id, @uptimes.last.offset)
 
           perform
         end
 
         it 'should send an call job for the matching uptimes' do
-          UptimeCallWorker.should_receive(:perform_in).with(5.minutes, @uptimes.last.id)
+          UptimeCallWorker.should_receive(:perform_in).with(5.minutes, @uptimes.last.id, @uptimes.last.offset)
 
           perform
         end

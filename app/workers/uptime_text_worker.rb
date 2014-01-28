@@ -1,6 +1,6 @@
 class UptimeTextWorker < Worker
-  def perform(uptime_id)
-    @user = (@uptime = Uptime.find(uptime_id)).user
+  def perform(uptime_id, offset)
+    @user, @offset = (@uptime = Uptime.find(uptime_id)).user, offset
 
     return unless can_text?
 
@@ -18,6 +18,6 @@ class UptimeTextWorker < Worker
   private
 
   def can_text?
-    @uptime.status == ACTIVE && @uptime.texts < 2
+    @uptime.status == ACTIVE && @uptime.texts < 2 && @uptime.offset == @offset
   end
 end

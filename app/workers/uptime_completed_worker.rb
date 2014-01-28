@@ -5,7 +5,7 @@ class UptimeCompletedWorker < Worker
     return unless can_activate?
 
     @uptime.update( :status => ACTIVE )
-    @user.uptime_logs.create(uptime_attributes)
+    @user.uptime_logs.create(attributes)
   end
 
   private
@@ -14,7 +14,7 @@ class UptimeCompletedWorker < Worker
     @uptime.status == COMPLETED
   end
 
-  def uptime_attributes
+  def attributes
     @uptime.slice(:offset, :pushed_at, :texted_at, :called_at, :pushes, :texts, :calls, :id => :uptime_id)
   end
 end

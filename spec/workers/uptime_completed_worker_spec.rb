@@ -15,6 +15,7 @@ describe UptimeCompletedWorker do
     end
 
     it 'should mark the uptime as active' do
+      uptime.status.should == COMPLETED
       perform
 
       uptime.reload.status.should == ACTIVE

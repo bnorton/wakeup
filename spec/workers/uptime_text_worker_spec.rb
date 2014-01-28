@@ -5,8 +5,9 @@ describe UptimeTextWorker do
   let(:uptime) { create(:uptime, :user => user, :texts => 1) }
 
   describe '#perform' do
+    let(:offset) { uptime.offset }
     let!(:messaging) { double(Messaging, :text => nil) }
-    let(:perform) { subject.perform(uptime.id) }
+    let(:perform) { subject.perform(uptime.id, offset) }
 
     before do
       Messaging.stub(:new).with(user).and_return(messaging)
@@ -32,7 +33,7 @@ describe UptimeTextWorker do
     end
 
     it 'should re-schedule itself' do
-      UptimeTextWorker.should_receive(:perform_in).with(30.seconds, uptime.id)
+      described_class.should_receive(:perform_in).with(30.seconds, uptime.id)
 
       perform
     end
@@ -55,7 +56,7 @@ describe UptimeTextWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimeTextWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
 
         perform
       end
@@ -79,7 +80,23 @@ describe UptimeTextWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimeTextWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
+
+        perform
+      end
+    end
+
+    describe 'when the offset does not match' do
+      let(:offset) { 999999 }
+
+      it 'should not send the text message' do
+        messaging.should_not_receive(:text)
+
+        perform
+      end
+
+      it 'should not re-schedule itself' do
+        described_class.should_not_receive(:perform_in)
 
         perform
       end

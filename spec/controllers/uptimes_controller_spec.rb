@@ -39,7 +39,7 @@ describe UptimesController do
 
   describe '#update' do
     let!(:uptime) { create(:uptime, :user => user, :offset => (Time.zone.now - Time.zone.now.midnight)+10) }
-    let(:options) { { :offset => 23.hours+59.minutes+59.seconds, :status => 'completed' } }
+    let(:options) { { :offset => 23.hours+59.minutes+59.seconds } }
 
     describe '.json' do
       def response
@@ -52,12 +52,25 @@ describe UptimesController do
         response.code.should == '200'
       end
 
-      it 'should have the new attributes' do
+      it 'should have the new offset' do
         response
 
         uptime.reload
         uptime.offset.should == (23*60*60)+(59*60)+59
-        uptime.status.should == 'completed'
+        uptime.status.should == 'active'
+      end
+
+      describe 'when updating the status' do
+        before do
+          options.delete(:offset)
+          options[:status] = 'completed'
+        end
+
+        it 'should have the new status' do
+          response
+
+          uptime.reload.status.should == 'completed'
+        end
       end
     end
   end

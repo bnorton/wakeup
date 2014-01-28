@@ -5,8 +5,9 @@ describe UptimePushWorker do
   let(:uptime) { create(:uptime, :user => user, :pushes => 1) }
 
   describe '#perform' do
+    let(:offset) { uptime.offset }
     let!(:push) { double(Push, :notify => nil) }
-    let(:perform) { subject.perform(uptime.id) }
+    let(:perform) { subject.perform(uptime.id, offset) }
 
     before do
       Push.stub(:new).with(user).and_return(push)
@@ -32,7 +33,7 @@ describe UptimePushWorker do
     end
 
     it 'should re-schedule itself' do
-      UptimePushWorker.should_receive(:perform_in).with(20.seconds, uptime.id)
+      described_class.should_receive(:perform_in).with(20.seconds, uptime.id)
 
       perform
     end
@@ -55,7 +56,7 @@ describe UptimePushWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimePushWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
 
         perform
       end
@@ -79,7 +80,23 @@ describe UptimePushWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimePushWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
+
+        perform
+      end
+    end
+
+    describe 'when the offset does not match' do
+      let(:offset) { 999999 }
+
+      it 'should not send a push notification' do
+        push.should_not_receive(:notify)
+
+        perform
+      end
+
+      it 'should not re-schedule itself' do
+        described_class.should_not_receive(:perform_in)
 
         perform
       end

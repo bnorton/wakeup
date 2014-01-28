@@ -5,8 +5,9 @@ describe UptimeCallWorker do
   let(:uptime) { create(:uptime, :user => user, :calls => 1) }
 
   describe '#perform' do
+    let(:offset) { uptime.offset }
     let!(:messaging) { double(Messaging, :call => nil) }
-    let(:perform) { subject.perform(uptime.id) }
+    let(:perform) { subject.perform(uptime.id, offset) }
 
     before do
       Messaging.stub(:new).with(user).and_return(messaging)
@@ -32,7 +33,7 @@ describe UptimeCallWorker do
     end
 
     it 'should re-schedule itself' do
-      UptimeCallWorker.should_receive(:perform_in).with(1.minute, uptime.id)
+      described_class.should_receive(:perform_in).with(1.minute, uptime.id)
 
       perform
     end
@@ -55,7 +56,7 @@ describe UptimeCallWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimeCallWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
 
         perform
       end
@@ -79,7 +80,23 @@ describe UptimeCallWorker do
       end
 
       it 'should not re-schedule itself' do
-        UptimeCallWorker.should_not_receive(:perform_in)
+        described_class.should_not_receive(:perform_in)
+
+        perform
+      end
+    end
+
+    describe 'when the offset does not match' do
+      let(:offset) { 999999 }
+
+      it 'should not place a call' do
+        messaging.should_not_receive(:call)
+
+        perform
+      end
+
+      it 'should not re-schedule itself' do
+        described_class.should_not_receive(:perform_in)
 
         perform
       end

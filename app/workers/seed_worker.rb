@@ -6,11 +6,11 @@ class SeedWorker < Worker
     Uptime.where(:id => uptimes.map(&:first)).update_all(:status => QUEUED)
 
     uptimes.each do |id, offset|
-      UptimePushWorker.perform_in(offset-seconds, id)
+      UptimePushWorker.perform_in(offset-seconds, id, offset)
     end.each do |id, offset|
-      UptimeTextWorker.perform_in(offset-seconds+2.minutes, id)
+      UptimeTextWorker.perform_in(offset-seconds+2.minutes, id, offset)
     end.each do |id, offset|
-      UptimeCallWorker.perform_in(offset-seconds+4.minutes, id)
+      UptimeCallWorker.perform_in(offset-seconds+4.minutes, id, offset)
     end
   end
 

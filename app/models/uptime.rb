@@ -5,13 +5,14 @@ class Uptime < ActiveRecord::Base
 
   belongs_to :user
 
-  after_save :completion, :if  => :completion?
+  before_update -> { self.status = ACTIVE }, :if => :offset_changed?
+  after_update :completion, :if  => :completion?
 
   private
 
   def completion
-    offset < Time.zone.offset ? UptimeCompletedWorker.perform_async(id) :
-      UptimeCompletedWorker.perform_in(10.minutes, id)
+    offset < Time.zone.offset ? UptimeCompletedWorker.perform_async(id, offset) :
+      UptimeCompletedWorker.perform_in(10.minutes, id, offset)
   end
 
   def completion?

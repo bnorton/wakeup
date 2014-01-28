@@ -1,6 +1,6 @@
 class UptimePushWorker < Worker
-  def perform(uptime_id)
-    @user = (@uptime = Uptime.find(uptime_id)).user
+  def perform(uptime_id, offset)
+    @user, @offset = (@uptime = Uptime.find(uptime_id)).user, offset
 
     return unless can_push?
 
@@ -18,6 +18,6 @@ class UptimePushWorker < Worker
   private
 
   def can_push?
-    @uptime.status == ACTIVE && @uptime.pushes < 6
+    @uptime.status == ACTIVE && @uptime.pushes < 6 && @uptime.offset == @offset
   end
 end
