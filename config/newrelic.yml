@@ -1,0 +1,40 @@
+#
+# This file configures the New Relic Agent.  New Relic monitors
+# Ruby, Java, .NET, PHP, and Python applications with deep visibility and low overhead.
+# For more information, visit www.newrelic.com.
+#
+# Generated January 28, 2014
+#
+# This configuration file is custom generated for Brian Norton
+common: &common
+  license_key: '828d0557d6bb75cd5834bc9078ccafea6698a880'
+  app_name: 'wakeup'
+  monitor_mode: true
+  developer_mode: false
+  log_level: info
+  browser_monitoring:
+      auto_instrument: false
+  audit_log:
+    enabled: false
+  capture_params: false
+  transaction_tracer:
+    enabled: true
+    transaction_threshold: apdex_f
+    record_sql: obfuscated
+    stack_trace_threshold: 0.500
+  error_collector:
+    enabled: true
+    capture_source: true
+    ignore_errors: "ActionController::RoutingError,Sinatra::NotFound"
+development:
+  <<: *common
+  monitor_mode: false
+  developer_mode: true
+  app_name: 'wakeup - development'
+test:
+  <<: *common
+  monitor_mode: false
+production:
+  <<: *common
+  monitor_mode: true
+  app_name: 'wakeup - production'
