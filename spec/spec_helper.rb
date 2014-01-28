@@ -30,7 +30,6 @@ silence_warnings {
 
 RSpec.configure do |config|
   config.mock_with :rspec
-
   config.formatter = Fuubar unless rubymine
 
   config.infer_base_class_for_anonymous_controllers = true
@@ -38,13 +37,13 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.use_transactional_fixtures = true
 
-  config.include Shoulda::Matchers::ActiveRecord
-  config.include FactoryGirl::Syntax::Methods
   config.include Helpers
-
+  config.include FactoryGirl::Syntax::Methods
+  config.include Shoulda::Matchers::ActiveRecord
   config.include Rails.application.routes.url_helpers, :url_helpers => true
 
-  config.before(:each, :redis => true)  { Sidekiq.redis {|r| r.flushdb } }
+  config.before(:each, :redis => true) { Sidekiq.redis {|r| r.flushdb } }
+  config.after(:each, :frozen => true) { Timecop.return }
 
   $user = FactoryGirl.create(:user)
 end

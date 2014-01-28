@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   include Model
 
   has_one :uptime
+  has_many :uptime_logs
 
   validates :phone, :presence => true
 

@@ -1,9 +1,7 @@
 class SeedWorker < Worker
   def perform
-    seconds = Time.zone.now.utc.seconds_since_midnight.to_i
-
     uptimes = Uptime.where(:status => ACTIVE).
-      where('"offset" >= ? AND "offset" < ?', seconds, seconds+5.minutes).pluck(:id, :offset)
+      where('"offset" >= ? AND "offset" < ?', seconds-1.minute, seconds+5.minutes).pluck(:id, :offset)
 
     Uptime.where(:id => uptimes.map(&:first)).update_all(:status => QUEUED)
 
@@ -14,5 +12,9 @@ class SeedWorker < Worker
     end.each do |id, offset|
       UptimeCallWorker.perform_in(offset-seconds+4.minutes, id)
     end
+  end
+
+  def seconds
+    @seconds ||= Time.zone.now.seconds_since_midnight.to_i
   end
 end

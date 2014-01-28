@@ -8,6 +8,9 @@ module Model
   end
 
   module ClassMethods
+    def belongs_to(*names)
+      names.flatten.each {|name| super(name) }
+    end
   end
 
   module InstanceMethods
@@ -23,6 +26,18 @@ module Model
     def process_defaults_save
       if respond_to?(:defaults_before_create, true)
         send(:defaults_before_create)
+      end
+    end
+
+    def slice(*args)
+      hash = {}
+
+      (args.last.is_a?(Hash) && args.pop || {}).each do |attr, name|
+        hash[name] = send(attr)
+      end
+
+      args.flatten.each_with_object(hash) do |arg, h|
+        h[arg] = send(arg)
       end
     end
   end

@@ -9,6 +9,15 @@ describe Model do
     end
   end
 
+  describe '.belongs_to' do
+    it 'should add a belongs to for each' do
+      subject.class.send(:belongs_to, :user, :other)
+
+      subject.should respond_to(:user)
+      subject.should respond_to(:other)
+    end
+  end
+
   describe '#status' do
     it { subject.save; subject.status.should == ACTIVE }
 
@@ -26,6 +35,23 @@ describe Model do
       end
 
       it { should_not be_valid }
+    end
+  end
+
+  describe '#slice' do
+    before do
+      subject.class.send(:attr_accessor, :uid, :foo)
+
+      subject.uid = 5
+      subject.foo = 'bar'
+    end
+
+    it 'should retrieve the attributes' do
+      subject.slice(:foo).should == { :foo => 'bar' }
+    end
+
+    it 'should rename attributes' do
+      subject.slice(:foo, :uid => :fooid).should == { :fooid => 5, :foo => 'bar' }
     end
   end
 

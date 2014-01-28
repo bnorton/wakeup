@@ -11,10 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140128053218) do
+ActiveRecord::Schema.define(version: 20140128211602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "uptime_logs", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "status"
+    t.datetime "pushed_at"
+    t.datetime "texted_at"
+    t.datetime "called_at"
+    t.integer  "offset"
+    t.integer  "pushes"
+    t.integer  "texts"
+    t.integer  "calls"
+    t.integer  "user_id"
+    t.integer  "uptime_id"
+  end
 
   create_table "uptimes", force: true do |t|
     t.datetime "created_at"

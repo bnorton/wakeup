@@ -11,6 +11,7 @@ describe User do
 
   describe 'associations' do
     it { should have_one(:uptime) }
+    it { should have_many(:uptime_logs) }
   end
 
   describe '#save' do
