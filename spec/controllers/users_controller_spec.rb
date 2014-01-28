@@ -57,7 +57,7 @@ describe UsersController do
   end
 
   describe '#update' do
-    let(:user) { create(:user) }
+    let!(:user) { create(:user) }
     let(:options) { { :vcode => vcode, :version => '1.2.4', :locale => 'GB', :timezone => '-2', :status => 'deleted' } }
 
     describe '.json' do
@@ -89,6 +89,10 @@ describe UsersController do
         user.locale.should == 'GB'
         user.version.should == '1.2.4'
         user.status.should == 'deleted'
+      end
+
+      it 'should respond with the user' do
+        response.body.should == UserPresenter.new(user.reload).to_json
       end
 
       describe 'when the code does not match' do

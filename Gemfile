@@ -11,6 +11,7 @@ gem 'sidekiq'
 gem 'newrelic_rpm'
 
 gem 'typhoeus'
+gem 'urbanairship'
 
 group :development, :test do
   gem 'rspec-rails'

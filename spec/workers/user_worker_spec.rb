@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe UserWorker do
-  let(:user) { create(:user) }
+  let(:user) { $user }
   let(:messaging) { double(Messaging) }
 
   describe '#perform' do

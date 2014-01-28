@@ -57,7 +57,7 @@ describe User do
 
           subject.token.should_not == @token
           subject.code.should_not == @code
-          subject.verified_at.should be_within(1).of Time.now
+          subject.verified_at.should be_within(1).of Time.zone.now
         end
 
         describe 'when the vcode does not match' do

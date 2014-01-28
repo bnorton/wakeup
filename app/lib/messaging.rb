@@ -17,7 +17,7 @@ class Messaging
       :text => message
   end
 
-  def call(callback)
+  def call(callback=nil)
     post :tts,
       :text => 'wake the fuck up! literally just launch the app',
       :callback => callback

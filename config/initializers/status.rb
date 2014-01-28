@@ -1,6 +1,9 @@
 ACTIVE = 'active'
-HIDDEN = 'hidden'
+QUEUED = 'queued'
+STARTED = 'started'
+DELAYED = 'delayed'
+COMPLETED = 'completed'
 DELETED = 'deleted'
 SYSTEM = 'system'
 
-STATUS = [ACTIVE, HIDDEN, DELETED, SYSTEM].map!(&:freeze).freeze
+STATUS = [ACTIVE, QUEUED, STARTED, DELAYED, COMPLETED, DELETED, SYSTEM].map!(&:freeze).freeze

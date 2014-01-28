@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Presenter do
   let(:cat) { 1.hours.ago }
-  let(:uat) { Time.now }
+  let(:uat) { Time.zone.now }
 
   class BasePresenter < Presenter
   end

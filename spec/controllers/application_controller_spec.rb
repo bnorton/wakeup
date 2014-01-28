@@ -28,7 +28,7 @@ describe ApplicationController do
   end
 
   describe 'when there is a user authenticate' do
-    let(:user) { create(:user) }
+    let(:user) { $user }
 
     before do
       options[:user_id] = user.id

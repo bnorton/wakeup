@@ -21,6 +21,14 @@ module Helpers
   end
 
   module InstanceMethods
+    def frozen(method, &block)
+      Timecop.freeze(DateTime.now) do
+        send(method)
+
+        block.()
+      end
+    end
+
     METHODS.each do |type|
       define_method :"#{type}_with_headers" do |path, *args|
         options = args.shift || {}

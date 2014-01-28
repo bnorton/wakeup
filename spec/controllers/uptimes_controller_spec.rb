@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe UptimesController do
-  let(:user) { create(:user) }
+  let(:user) { $user }
 
   describe '.create' do
     let(:options) { { :offset => 3.hours.to_i } }
@@ -38,8 +38,8 @@ describe UptimesController do
   end
 
   describe '#update' do
-    let!(:uptime) { create(:uptime, :user => user, :offset => (Time.now - Time.now.midnight)+10) }
-    let(:options) { { :offset => 23.hours+59.minutes+59.seconds, :status => 'hidden' } }
+    let!(:uptime) { create(:uptime, :user => user, :offset => (Time.zone.now - Time.zone.now.midnight)+10) }
+    let(:options) { { :offset => 23.hours+59.minutes+59.seconds, :status => 'completed' } }
 
     describe '.json' do
       def response
@@ -57,7 +57,7 @@ describe UptimesController do
 
         uptime.reload
         uptime.offset.should == (23*60*60)+(59*60)+59
-        uptime.status.should == 'hidden'
+        uptime.status.should == 'completed'
       end
     end
   end

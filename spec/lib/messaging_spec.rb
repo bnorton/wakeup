@@ -36,7 +36,7 @@ describe Messaging do
   end
 
   describe '#text' do
-    let(:user) { create(:user) }
+    let(:user) { $user }
     subject { Messaging.new(user) }
 
     let(:text) { subject.text('hello you') }
@@ -78,7 +78,7 @@ describe Messaging do
   end
 
   describe '#call' do
-    let(:user) { create(:user) }
+    let(:user) { $user }
     subject { Messaging.new(user) }
 
     let(:call) { subject.call('http://example.com/some-callback.json') }
@@ -124,6 +124,18 @@ describe Messaging do
       end
 
       call
+    end
+
+    describe 'when not given a callback' do
+      let(:call) { subject.call }
+
+      it 'should callback to nothing' do
+        client.should_receive(:post) do |_,options|
+          options[:body][:callback].should == nil
+        end
+
+        call
+      end
     end
   end
 end

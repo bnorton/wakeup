@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140124234915) do
+ActiveRecord::Schema.define(version: 20140128053218) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,9 @@ ActiveRecord::Schema.define(version: 20140124234915) do
     t.datetime "called_at"
     t.integer  "user_id"
     t.string   "status"
+    t.integer  "pushes"
+    t.integer  "texts"
+    t.integer  "calls"
   end
 
   add_index "uptimes", ["offset"], name: "index_uptimes_on_offset", using: :btree
@@ -44,6 +47,8 @@ ActiveRecord::Schema.define(version: 20140124234915) do
     t.string   "udid"
     t.string   "bundle"
     t.string   "status"
+    t.string   "apn"
+    t.datetime "apn_at"
   end
 
   add_index "users", ["phone"], name: "index_users_on_phone", unique: true, using: :btree

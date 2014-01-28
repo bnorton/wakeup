@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   end
 
   def _update(*names)
-    relation.update_attributes!(params.permit(*[*names, :status])) && relation
+    relation.update!(params.permit(*[*names, :status])) && relation
   end
 
   def relation

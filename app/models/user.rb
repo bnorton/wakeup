@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 
   def verify
     (vcode == code).tap_if do
-      self.verified_at = Time.now
+      self.verified_at = Time.zone.now
       reset_auth
     end
   end

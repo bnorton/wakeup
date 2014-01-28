@@ -17,7 +17,7 @@ WebMock.disable_net_connect!(:allow_localhost => true)
 if rubymine
   `rake test:prepare`
 else
-  Rails.logger.info "\n[#{Time.now.localtime}] - Logging with level ERROR (4). see #{__FILE__}:#{__LINE__}"
+  Rails.logger.info "\n[#{Time.zone.now.localtime}] - Logging with level ERROR (4). see #{__FILE__}:#{__LINE__}"
   Sidekiq.logger = Rails.logger
   Rails.logger.level = 4
 end
@@ -44,12 +44,9 @@ RSpec.configure do |config|
 
   config.include Rails.application.routes.url_helpers, :url_helpers => true
 
-  config.before :each do
-    Sidekiq.redis {|r| r.flushdb }
-  end
+  config.before(:each, :redis => true)  { Sidekiq.redis {|r| r.flushdb } }
 
-  config.before(:each, :freeze => true) { Timecop.freeze(DateTime.now) }
-  config.after( :each, :freeze => true) { Timecop.return }
+  $user = FactoryGirl.create(:user)
 end
 
 Dir[Rails.root.join('db/migrate/*.rb')].each {|f| require f }
