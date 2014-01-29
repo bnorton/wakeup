@@ -1,8 +1,8 @@
 class User < ActiveRecord::Base
   include Model
 
-  has_one :uptime
-  has_many :uptime_logs
+  has :one => [:uptime],
+    :many => [:alarms, :sessions]
 
   validates :phone, :presence => true
 

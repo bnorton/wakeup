@@ -3,7 +3,7 @@ class SeedsController < ApplicationController
 
   def check
     if Sidekiq.redis {|r| r.setnx(CHECK, true) }
-      Sidekiq.redis  {|r| r.expireat(CHECK, 4.minutes.from_now.to_i) }
+      Sidekiq.redis  {|r| r.expireat(CHECK, 2.minutes.from_now.to_i) }
 
       SeedWorker.perform_async
     end

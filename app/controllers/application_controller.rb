@@ -79,5 +79,9 @@ ApplicationController::RELATION = {
   'uptimes' => {
     'create' => proc { Uptime },
     'update' => ->(c) { c.user.uptime }
+  },
+  'sessions' => {
+    'create' => ->(c) { c.user.sessions },
+    'update' => ->(c) { c.user.sessions.find(c.params[:id]) }
   }
 }

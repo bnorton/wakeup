@@ -1,20 +1,16 @@
 class SeedWorker < Worker
   def perform
-    uptimes = Uptime.where(:status => ACTIVE).
-      where('"offset" >= ? AND "offset" < ?', seconds-1.minute, seconds+5.minutes).pluck(:id, :offset)
+    als = Alarm.where(:status => ACTIVE).
+      where('"wake_at" < ?', 5.minutes.from_now).pluck(:id, :wake_at)
 
-    Uptime.where(:id => uptimes.map(&:first)).update_all(:status => QUEUED)
+    Alarm.where(:id => als.map(&:first)).update_all(:status => QUEUED)
 
-    uptimes.each do |id, offset|
-      UptimePushWorker.perform_in(offset-seconds, id, offset)
-    end.each do |id, offset|
-      UptimeTextWorker.perform_in(offset-seconds+2.minutes, id, offset)
-    end.each do |id, offset|
-      UptimeCallWorker.perform_in(offset-seconds+4.minutes, id, offset)
+    als.each do |id, wake_at|
+      AlarmPushWorker.perform_at(wake_at, id)
+    end.each do |id, wake_at|
+      AlarmTextWorker.perform_at(wake_at+2.minutes, id)
+    end.each do |id, wake_at|
+      AlarmCallWorker.perform_at(wake_at+4.minutes, id)
     end
-  end
-
-  def seconds
-    @seconds ||= Time.zone.now.seconds_since_midnight.to_i
   end
 end

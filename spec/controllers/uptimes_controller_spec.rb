@@ -2,9 +2,10 @@ require 'spec_helper'
 
 describe UptimesController do
   let(:user) { $user }
+  let(:wake) { '2014-10-31T10:20:40.679Z' }
 
   describe '.create' do
-    let(:options) { { :offset => 3.hours.to_i } }
+    let(:options) { { :wake_at => wake } }
 
     describe '.json' do
       def response
@@ -17,7 +18,7 @@ describe UptimesController do
         response.code.should == '201'
       end
 
-      it 'should add a uptime' do
+      it 'should add an uptime' do
         expect {
           response
         }.to change(Uptime, :count).by(1)
@@ -28,7 +29,7 @@ describe UptimesController do
 
         uptime = Uptime.last
         uptime.user.should == user
-        uptime.offset.should == 3*60*60 # 3 hours in seconds
+        uptime.wake_at.should == Time.parse(wake)
       end
 
       it 'should return the new uptime' do
@@ -38,8 +39,8 @@ describe UptimesController do
   end
 
   describe '#update' do
-    let!(:uptime) { create(:uptime, :user => user, :offset => (Time.zone.now - Time.zone.now.midnight)+10) }
-    let(:options) { { :offset => 23.hours+59.minutes+59.seconds } }
+    let!(:uptime) { create(:uptime, :user => user, :wake_at => Time.zone.now, :status => DELETED) }
+    let(:options) { { :wake_at => wake } }
 
     describe '.json' do
       def response
@@ -52,25 +53,16 @@ describe UptimesController do
         response.code.should == '200'
       end
 
-      it 'should have the new offset' do
+      it 'should have the new wake time' do
         response
 
         uptime.reload
-        uptime.offset.should == (23*60*60)+(59*60)+59
+        uptime.wake_at.should == Time.parse(wake)
         uptime.status.should == 'active'
       end
 
-      describe 'when updating the status' do
-        before do
-          options.delete(:offset)
-          options[:status] = 'completed'
-        end
-
-        it 'should have the new status' do
-          response
-
-          uptime.reload.status.should == 'completed'
-        end
+      it 'should return the uptime' do
+        response.body.should == UptimePresenter.new(uptime.reload).to_json
       end
     end
   end

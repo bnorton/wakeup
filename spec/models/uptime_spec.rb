@@ -6,7 +6,8 @@ describe Uptime do
 
     it { should be_valid }
 
-    validates(:offset)
+    validates(:wake_at)
+    validates(:user_id)
   end
 
   describe 'associations' do
@@ -14,49 +15,35 @@ describe Uptime do
   end
 
   describe '#save' do
-    subject { build(:uptime, :offset => Time.zone.offset-1.minute, :status => DELAYED) }
+    subject { build(:uptime) }
+
+    it 'should send a job to process the item' do
+      UptimeWorker.should_receive(:perform_async) do |id|
+        id.should == subject.id
+      end
+
+      subject.save!
+    end
 
     describe 'on update' do
-      describe 'when modifying the offset' do
+      let!(:uptime) { subject.tap(&:save!) }
+
+      describe 'when modifying the wake time' do
+        subject { build(:uptime, :wake_at => Time.zone.now, :status => DELETED) }
+
         before do
-          subject.save!
-          subject.offset = subject.offset + 10.minutes
+          subject.wake_at = 1.day.from_now
         end
 
         it 'should activate the uptime' do
           subject.tap(&:save!).reload
           subject.status.should == ACTIVE
         end
-      end
 
-      describe 'when completing the uptime' do
-        before do
-          Timecop.freeze(Time.zone.now)
+        it 'should send a job to process the item' do
+          UptimeWorker.should_receive(:perform_async).with(subject.id)
 
           subject.save!
-          subject.status = COMPLETED
-        end
-
-        it 'should send a job to process the completion' do
-          UptimeCompletedWorker.should_receive(:perform_async).with(subject.id, subject.offset)
-
-          subject.save!
-        end
-
-        describe 'when the time is still in range' do
-          before do
-            subject.status = DELAYED
-            subject.offset += 2.minutes
-            subject.save
-            subject.status = COMPLETED
-          end
-
-          it 'should schedule the job' do
-            UptimeCompletedWorker.should_not_receive(:perform_async)
-            UptimeCompletedWorker.should_receive(:perform_in).with(10.minutes, subject.id, subject.offset)
-
-            subject.save!
-          end
         end
       end
     end

@@ -11,7 +11,8 @@ describe User do
 
   describe 'associations' do
     it { should have_one(:uptime) }
-    it { should have_many(:uptime_logs) }
+    it { should have_many(:alarms) }
+    it { should have_many(:sessions) }
   end
 
   describe '#save' do
@@ -58,7 +59,7 @@ describe User do
 
           subject.token.should_not == @token
           subject.code.should_not == @code
-          subject.verified_at.should be_within(1).of Time.zone.now
+          subject.verified_at.should be_within(1.second).of Time.zone.now
         end
 
         describe 'when the vcode does not match' do

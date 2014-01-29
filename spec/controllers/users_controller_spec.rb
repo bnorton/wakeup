@@ -91,7 +91,7 @@ describe UsersController do
         user.status.should == 'deleted'
       end
 
-      it 'should respond with the user' do
+      it 'should return the user' do
         response.body.should == UserPresenter.new(user.reload).to_json
       end
 

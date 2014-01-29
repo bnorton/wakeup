@@ -22,7 +22,7 @@ describe SeedsController, :redis => true do
       before do
         response
 
-        Timecop.travel(3.minutes)
+        Timecop.travel(2.minutes-1)
       end
 
       it 'should not send a job' do
@@ -35,7 +35,7 @@ describe SeedsController, :redis => true do
         before do
           response
 
-          Timecop.travel(1.minutes+1)
+          Timecop.travel(2.seconds)
         end
 
         it 'should send seed job' do

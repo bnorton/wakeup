@@ -11,10 +11,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140128211602) do
+ActiveRecord::Schema.define(version: 20140129054254) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "alarms", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "status"
+    t.datetime "wake_at"
+    t.datetime "pushed_at"
+    t.datetime "texted_at"
+    t.datetime "called_at"
+    t.integer  "pushes"
+    t.integer  "texts"
+    t.integer  "calls"
+    t.integer  "user_id"
+    t.integer  "uptime_id"
+  end
+
+  create_table "sessions", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "status"
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.integer  "user_id"
+  end
 
   create_table "uptime_logs", force: true do |t|
     t.datetime "created_at"
@@ -34,18 +58,11 @@ ActiveRecord::Schema.define(version: 20140128211602) do
   create_table "uptimes", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "offset"
-    t.datetime "pushed_at"
-    t.datetime "texted_at"
-    t.datetime "called_at"
     t.integer  "user_id"
     t.string   "status"
-    t.integer  "pushes"
-    t.integer  "texts"
-    t.integer  "calls"
+    t.datetime "wake_at"
   end
 
-  add_index "uptimes", ["offset"], name: "index_uptimes_on_offset", using: :btree
   add_index "uptimes", ["user_id"], name: "index_uptimes_on_user_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|

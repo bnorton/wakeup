@@ -1,3 +1,3 @@
 class UptimePresenter < Presenter
-  allow :offset
+  allow :wake_at
 end

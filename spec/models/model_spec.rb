@@ -18,6 +18,15 @@ describe Model do
     end
   end
 
+  describe '.has' do
+    it 'should add a has_{one,many} to for each' do
+      subject.class.send(:has, :one => [:thing], :many => [:others])
+
+      subject.should respond_to(:thing)
+      subject.should respond_to(:others)
+    end
+  end
+
   describe '#status' do
     it { subject.save; subject.status.should == ACTIVE }
 

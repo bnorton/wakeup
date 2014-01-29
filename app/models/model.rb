@@ -11,6 +11,11 @@ module Model
     def belongs_to(*names)
       names.flatten.each {|name| super(name) }
     end
+
+    def has(options)
+      options[:one].present? && options[:one].each {|one| has_one one }
+      options[:many].present? && options[:many].each {|many| has_many many }
+    end
   end
 
   module InstanceMethods
