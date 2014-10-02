@@ -1,1 +1,0 @@
-Wakeup::Application.config.secret_key_base = 'a3c4813f9787d4f441a0f8654328e31959c05befe1565635b245efbc9950ea0c9be28dedbbacb1e3a19a3f7f42710a4132166d7c425b7752a0da2b78f800b3f6'
